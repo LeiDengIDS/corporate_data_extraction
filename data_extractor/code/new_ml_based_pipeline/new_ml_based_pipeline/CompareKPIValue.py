@@ -47,7 +47,7 @@ class CompareKPIValue:
     # Reference: https://www.youtube.com/watch?v=SqDjsZG3Mkc
 
     def is_kpi_value_same(self, extracted_kpi, annotated_kpi):
-        ''' Only compare the extracted KPI value and real KPI value,
+        ''' Only compare the extracted KPI value with the actual KPI value,
         and check if they are the same.'''
         extkpi_number = self.get_kpi_number(extracted_kpi)
         annokpi_number = self.get_kpi_number(annotated_kpi)
