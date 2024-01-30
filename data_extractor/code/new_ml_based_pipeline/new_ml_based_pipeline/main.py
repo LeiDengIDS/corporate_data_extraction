@@ -5,7 +5,7 @@
 # Date: 27.07.2023
 # ============================================================================================================================
 
-''' This KPI automated Extraction Tool provides 2 NLP methods- Haystack and DQA, eath method default models are set.
+''' This KPI automated Extraction Tool provides 2 NLP methods- Haystack and DQA, each method default models are set.
 It also supports users to choose a suitable NLP model.'''
 
 import argparse
