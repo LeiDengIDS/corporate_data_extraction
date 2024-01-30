@@ -5,7 +5,7 @@
 # Date   : 27.07.2023
 # ============================================================================================================================
 
-''' Compare the extracted KPI data and the actual KPI data by comparing the string and number.'''
+''' Compare the extracted KPI data with the actual KPI data by comparing the string and number.'''
 
 import re
 
