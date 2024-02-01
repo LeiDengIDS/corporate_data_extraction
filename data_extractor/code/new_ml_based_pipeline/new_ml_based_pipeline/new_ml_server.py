@@ -1,6 +1,7 @@
 import argparse
 import os
 import json
+import traceback
 
 from flask import Flask, Response, request
 from s3_communication import S3Communication
