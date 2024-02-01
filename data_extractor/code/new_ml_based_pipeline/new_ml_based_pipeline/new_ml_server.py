@@ -77,7 +77,6 @@ def run_new_ml(project_name, nlp_method, s3_usage, s3_settings,nlp_model_rt=None
 def liveness():
     return Response(response={}, status=200)
 
-# start point, add optional parameters
 @app.route("/run")
 def run():
     try:
