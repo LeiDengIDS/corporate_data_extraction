@@ -49,30 +49,7 @@ def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder，nlp_model_
     print("Running command: " + cmd)
     os.system(cmd)
 
-def run_hs(project_name, nlp_method="Haystack", s3_usage, s3_settings,nlp_model_rt=None, nlp_model_re=None, nlp_model_dqa=None):
-    base = r"/app/data/" + project_name
-    pdf_folder = base + r"/interim/pdfs/"
-    questions = base + r"/interim/newml/questions"
-    output_folder = base + r"/output/KPI_EXTRACTION/newml"
-    if s3_usage:
-        s3c_main = S3Communication(
-            s3_endpoint_url=os.getenv(s3_settings["main_bucket"]["s3_endpoint"]),
-            aws_access_key_id=os.getenv(s3_settings["main_bucket"]["s3_access_key"]),
-            aws_secret_access_key=os.getenv(s3_settings["main_bucket"]["s3_secret_key"]),
-            s3_bucket=os.getenv(s3_settings["main_bucket"]["s3_bucket_name"]),
-        )
-        create_directory(base)
-        create_directory(pdf_folder)
-        create_directory(questions)
-        create_directory(output_folder)
-        project_prefix = s3_settings["prefix"] + "/" + project_name + "/data"
-        s3c_main.download_files_in_prefix_to_dir(project_prefix + "/input/pdfs/inference", pdf_folder)
-    run_new_ml_int(pdf_folder, questions, nlp_method="Haystack", output_folder, nlp_model_rt=nlp_model_rt, nlp_model_re=nlp_model_re, nlp_model_dqa=nlp_model_dqa)
-    if s3_usage:
-        s3c_main.upload_files_in_dir_to_prefix(output_folder, project_prefix + "/output/KPI_EXTRACTION/newml")
-    return True
-
-def run_dqa(project_name, nlp_method="DQA", s3_usage, s3_settings,nlp_model_rt=None, nlp_model_re=None, nlp_model_dqa=None):
+def run_new_ml(project_name, nlp_method, s3_usage, s3_settings,nlp_model_rt=None, nlp_model_re=None, nlp_model_dqa=None):
     base = r"/app/data/" + project_name
     pdf_folder = base + r"/interim/pdfs/"
     questions = base + r"/interim/newml/questions"
@@ -91,7 +68,7 @@ def run_dqa(project_name, nlp_method="DQA", s3_usage, s3_settings,nlp_model_rt=N
         create_directory(output_folder)
         project_prefix = s3_settings["prefix"] + "/" + project_name + "/data"
         s3c_main.download_files_in_prefix_to_dir(project_prefix + "/input/pdfs/inference", pdf_folder)
-    run_new_ml_int(pdf_folder, questions, nlp_method="DQA", output_folder,  nlp_model_rt=nlp_model_rt, nlp_model_re=nlp_model_re, nlp_model_dqa=nlp_model_dqa)
+    run_new_ml_int(pdf_folder, questions, nlp_method, output_folder, nlp_model_rt=nlp_model_rt, nlp_model_re=nlp_model_re, nlp_model_dqa=nlp_model_dqa)
     if s3_usage:
         s3c_main.upload_files_in_dir_to_prefix(output_folder, project_prefix + "/output/KPI_EXTRACTION/newml")
     return True
@@ -107,17 +84,14 @@ def run():
         args = json.loads(request.args["payload"])
         project_name = args["project_name"]
         s3_settings = None
-        nlp_model_rt = args.get("nlp_model_rt", None)
-        nlp_model_re = args.get("nlp_model_re", None)
-        nlp_model_dqa = args.get("nlp_model_dqa", None)
+        nlp_model_rt = args.get("sentence-transformers/multi-qa-mpnet-base-dot-v1", None)
+        nlp_model_re = args.get("ahotrod/albert_xxlargev1_squad2_512", None)
+        nlp_model_dqa = args.get("impira/layoutlm-invoices", None)
         
         if args["s3_usage"]:
             s3_settings = args["s3_settings"]
         nlp_method = str(args["nlp_method"])
-        if nlp_method == "Haystack": 
-            run_hs(project_name, nlp_method="Haystack", args["s3_usage"], s3_settings, nlp_model_rt, nlp_model_re,nlp_model_dqa)
-        elif nlp_method == "DQA": 
-            run_dqa(project_name, nlp_method="DQA", args["s3_usage"], s3_settings,nlp_model_rt, nlp_model_re,nlp_model_dqa)
+        run_new_ml(project_name, nlp_method, args["s3_usage"], s3_settings, nlp_model_rt, nlp_model_re,nlp_model_dqa)
         return Response(response={}, status=200)
     except Exception as e:
         m = traceback.format_exc()
