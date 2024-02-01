@@ -17,8 +17,11 @@ def create_directory(directory_name):
         except Exception as e:
             print("Failed to delete %s. Reason: %s" % (file_path, e))
 
-#need to adjust
-def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder，nlp_model_rt='sentence-transformers/multi-qa-mpnet-base-dot-v1',nlp_model_re ='ahotrod/albert_xxlargev1_squad2_512', nlp_model_dqa='impira/layoutlm-invoices' ):
+def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder，nlp_model_rt=None,nlp_model_re=None, nlp_model_dqa=None):
+    nlp_model_rt = nlp_model_rt or 'sentence-transformers/multi-qa-mpnet-base-dot-v1'
+    nlp_model_re = nlp_model_re or 'ahotrod/albert_xxlargev1_squad2_512'
+    nlp_model_dqa = nlp_model_dqa or 'impira/layoutlm-invoices'
+    
     cmd = (
         "python3 /app/code/new_ml_based_pipeline/new_ml_based_pipeline/main.py"
         + ' --pdf_folder "'
@@ -36,10 +39,10 @@ def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder，nlp_model_
         + str(nlp_model_rt)
         + '"'
         + ' --nlp_model_re "'
-        + str(nlp_model_rt)
+        + str(nlp_model_re)
         + '"'
         + ' --nlp_model_dqa "'
-        + str(nlp_model_rt)
+        + str(nlp_model_dqa)
         + '"'
     )
     print("Running command: " + cmd)
@@ -106,9 +109,9 @@ def run():
             s3_settings = args["s3_settings"]
         nlp_method = str(args["nlp_method"])
         if nlp_method == "Haystack": 
-            run_hs(project_name, Haystack, args["s3_usage"], s3_settings)
+            run_hs(project_name, nlp_method="Haystack", args["s3_usage"], s3_settings)
         elif nlp_method == "DQA": 
-            run_dqa(project_name, DQA, args["s3_usage"], s3_settings)
+            run_dqa(project_name, nlp_method="DQA", args["s3_usage"], s3_settings)
         return Response(response={}, status=200)
     except Exception as e:
         m = traceback.format_exc()
