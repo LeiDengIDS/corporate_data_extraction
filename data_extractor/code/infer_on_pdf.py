@@ -281,6 +281,50 @@ def set_xy_ml(
 
     return True
 
+def run_router_new_ml(pdf_folder, questions, nlp_method, output_folder, project_name, use_docker, port, ip, s3_usage,
+                      s3_settings，nlp_model_rt=None, nlp_model_re=None, nlp_model_dqa=None):
+    if use_docker:
+        payload = {"project_name": project_name}
+        if s3_usage:
+            payload.update({"s3_usage": s3_usage})
+            payload.update({"s3_settings": s3_settings})
+        payload = {"payload": json.dumps(payload)}
+        rb_response = requests.get(f"http://{ip}:{port}/run", params=payload)
+        print(rb_response.text)
+        if rb_response.status_code != 200:
+            return False
+    else:
+        nlp_model_rt = nlp_model_rt or 'sentence-transformers/multi-qa-mpnet-base-dot-v1'
+        nlp_model_re = nlp_model_re or 'ahotrod/albert_xxlargev1_squad2_512'
+        nlp_model_dqa = nlp_model_dqa or 'impira/layoutlm-invoices'
+        
+        cmd = (
+            config_path.PYTHON_EXECUTABLE
+            + " new_ml_based_pipeline/new_ml_based_pipeline/main.py"
+            + ' --pdf_folder "'
+            + pdf_folder
+            + '"'
+            + ' --questions "'
+            + questions
+            + '"'
+            + " --nlp_method "
+            + str(nlp_method)
+            + ' --output_folder "'
+            + output_folder
+            + '"'
+            + ' --nlp_model_rt "'
+            + str(nlp_model_rt)
+            + '"'
+            + ' --nlp_model_re "'
+            + str(nlp_model_re)
+            + '"'
+            + ' --nlp_model_dqa "'
+            + str(nlp_model_dqa)
+            + '"'
+        )
+        print("Running command: " + cmd)
+        os.system(cmd)
+    return True
 
 def get_current_run_id():
     return int(time.time())
