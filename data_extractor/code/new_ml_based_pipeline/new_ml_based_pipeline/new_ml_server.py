@@ -18,7 +18,7 @@ def create_directory(directory_name):
             print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 #need to adjust
-def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder):
+def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder，nlp_model_rt='sentence-transformers/multi-qa-mpnet-base-dot-v1',nlp_model_re ='ahotrod/albert_xxlargev1_squad2_512', nlp_model_dqa='impira/layoutlm-invoices' ):
     cmd = (
         "python3 /app/code/new_ml_based_pipeline/new_ml_based_pipeline/main.py"
         + ' --pdf_folder "'
@@ -32,11 +32,20 @@ def run_new_ml_int(pdf_folder, questions, nlp_method, output_folder):
         + ' --output_folder "'
         + output_folder
         + '"'
+        + ' --nlp_model_rt "'
+        + str(nlp_model_rt)
+        + '"'
+        + ' --nlp_model_re "'
+        + str(nlp_model_rt)
+        + '"'
+        + ' --nlp_model_dqa "'
+        + str(nlp_model_rt)
+        + '"'
     )
     print("Running command: " + cmd)
     os.system(cmd)
 
-def run_hs(project_name, Haystack, s3_usage, s3_settings):
+def run_hs(project_name, nlp_method="Haystack", s3_usage, s3_settings):
     base = r"/app/data/" + project_name
     pdf_folder = base + r"/interim/pdfs/"
     questions = base + r"/interim/newml/questions"
@@ -54,12 +63,12 @@ def run_hs(project_name, Haystack, s3_usage, s3_settings):
         create_directory(output_folder)
         project_prefix = s3_settings["prefix"] + "/" + project_name + "/data"
         s3c_main.download_files_in_prefix_to_dir(project_prefix + "/input/pdfs/inference", pdf_folder)
-    run_new_ml_int(pdf_folder, questions, Haystack, output_folder)
+    run_new_ml_int(pdf_folder, questions, nlp_method="Haystack", output_folder)
     if s3_usage:
         s3c_main.upload_files_in_dir_to_prefix(output_folder, project_prefix + "/output/KPI_EXTRACTION/newml")
     return True
 
-def run_dqa(project_name, DQA, s3_usage, s3_settings):
+def run_dqa(project_name, nlp_method="DQA", s3_usage, s3_settings):
     base = r"/app/data/" + project_name
     pdf_folder = base + r"/interim/pdfs/"
     questions = base + r"/interim/newml/questions"
@@ -77,7 +86,7 @@ def run_dqa(project_name, DQA, s3_usage, s3_settings):
         create_directory(output_folder)
         project_prefix = s3_settings["prefix"] + "/" + project_name + "/data"
         s3c_main.download_files_in_prefix_to_dir(project_prefix + "/input/pdfs/inference", pdf_folder)
-    run_new_ml_int(pdf_folder, questions, DQA, output_folder)
+    run_new_ml_int(pdf_folder, questions, nlp_method="DQA", output_folder)
     if s3_usage:
         s3c_main.upload_files_in_dir_to_prefix(output_folder, project_prefix + "/output/KPI_EXTRACTION/newml")
     return True
@@ -96,8 +105,10 @@ def run():
         if args["s3_usage"]:
             s3_settings = args["s3_settings"]
         nlp_method = str(args["nlp_method"])
-        run_hs(project_name, Haystack, args["s3_usage"], s3_settings)
-        run_dqa(project_name, DQA, args["s3_usage"], s3_settings)
+        if nlp_method == "Haystack": 
+            run_hs(project_name, Haystack, args["s3_usage"], s3_settings)
+        elif nlp_method == "DQA": 
+            run_dqa(project_name, DQA, args["s3_usage"], s3_settings)
         return Response(response={}, status=200)
     except Exception as e:
         m = traceback.format_exc()
