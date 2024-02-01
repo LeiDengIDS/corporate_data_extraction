@@ -49,10 +49,10 @@ def main():
     if nlp_method == 'Haystack' or nlp_method == 'Both':
         parser.add_argument('--nlp_model_rt', type=str, default='sentence-transformers/multi-qa-mpnet-base-dot-v1',
                             help='Please give a semantic search NLP model, otherwise, default model will be used.')
-        parser.add_argument('--nlp_model_re', type=str, default='deepset/roberta-base-squad2',
+        parser.add_argument('--nlp_model_re', type=str, default='ahotrod/albert_xxlargev1_squad2_512',
                             help='Please give a question answering NLP Model, otherwise, default model will be used.')
     if nlp_method == 'DQA' or nlp_method == 'Both':
-        parser.add_argument('--nlp_model_dqa', type=str, default='impira/layoutlm-document-qa',
+        parser.add_argument('--nlp_model_dqa', type=str, default='impira/layoutlm-invoices',
                             help='Please give a document question answering, otherwise, default model will be used.')
 
     # parse parameter
