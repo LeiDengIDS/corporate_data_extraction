@@ -27,6 +27,7 @@ RUN apt-get install -y tesseract-ocr libtesseract-dev
 WORKDIR /app/code/new_ml_based_pipeline
 
 RUN mkdir -p /app/server_logs
+RUN chmod -R 777 /app/server_logs
 
 # RUN chmod u+x entry.sh
 CMD ./entry.sh
