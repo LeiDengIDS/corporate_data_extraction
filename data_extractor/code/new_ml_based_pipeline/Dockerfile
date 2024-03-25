@@ -24,6 +24,15 @@ RUN apt-get install -y vim
 # install Tesseract
 RUN apt-get install -y tesseract-ocr libtesseract-dev
 
+# install oc tool
+RUN wget https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.8.0/openshift-client-linux.tar.gz && \
+    tar -xvf openshift-client-linux.tar.gz && \
+    mv oc kubectl /usr/local/bin/ && \
+    rm -f openshift-client-linux.tar.gz
+
+# Set the oc and kubectl binaries as executable
+RUN chmod +x /usr/local/bin/oc /usr/local/bin/kubectl
+
 WORKDIR /app/code/new_ml_based_pipeline
 
 RUN mkdir -p /app/server_logs
