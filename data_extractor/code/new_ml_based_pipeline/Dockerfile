@@ -10,7 +10,15 @@ RUN pip install pdf2image
 RUN pip install pdfminer.six
 RUN pip install fuzzywuzzy
 
+# Install kubectl
+RUN apt-get update && apt-get install -y apt-transport-https gnupg2
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN apt-get update
+RUN apt-get install -y kubectl
+
 COPY ./new_ml_based_pipeline /app/code/new_ml_based_pipeline
+COPY ./s3_communication.py /app/code/new_ml_based_pipeline/new_ml_based_pipeline/s3_communication.py
 
 RUN mkdir -p /app/code/new_ml_based_pipeline/myhome/
 
@@ -23,12 +31,6 @@ RUN apt-get install -y vim
 
 # install Tesseract
 RUN apt-get install -y tesseract-ocr libtesseract-dev
-
-# install oc tool
-RUN wget https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.8.0/openshift-client-linux.tar.gz && \
-    tar -xvf openshift-client-linux.tar.gz && \
-    mv oc kubectl /app/code/new_ml_based_pipeline && \
-    rm -f openshift-client-linux.tar.gz
 
 WORKDIR /app/code/new_ml_based_pipeline
 
