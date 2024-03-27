@@ -25,8 +25,8 @@ RUN mkdir -p /app/code/new_ml_based_pipeline/myhome/
 RUN chgrp -R 0 /app/code/new_ml_based_pipeline && chmod g=u /app/code/new_ml_based_pipeline
 RUN chmod -R 777 /app/code/new_ml_based_pipeline
 
-# RUN apt-get update && apt-get install -y wget sudo
-RUN apt-get install -y wget sudo
+RUN apt-get update && apt-get install -y wget sudo
+#RUN apt-get install -y wget sudo
 RUN apt-get install -y poppler-utils
 RUN apt-get install -y vim
 
