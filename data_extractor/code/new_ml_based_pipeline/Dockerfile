@@ -11,9 +11,9 @@ RUN pip install pdfminer.six
 RUN pip install fuzzywuzzy
 
 # Install kubectl
-RUN apt-get update && apt-get install -y apt-transport-https gnupg2
+RUN apt-get update && apt-get install -y apt-transport-https gnupg2 wget
 RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN wget -qO - https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 RUN apt-get update
 RUN apt-get install -y kubectl
 
