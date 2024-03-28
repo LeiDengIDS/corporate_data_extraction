@@ -25,11 +25,9 @@ RUN pip install fuzzywuzzy
 # RUN apt-get install -y kubectl
 
 # Download kubectl binary using wget
-RUN wget https://storage.googleapis.com/kubernetes-release/release/$(wget -qO- https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+RUN wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(wget -qO- https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 # Make kubectl executable
-RUN chmod +x ./kubectl
-# Move kubectl binary to a directory in the PATH
-RUN mv ./kubectl /usr/local/bin
+RUN chmod +x /usr/local/bin/kubectl
 
 COPY ./new_ml_based_pipeline /app/code/new_ml_based_pipeline
 COPY ./s3_communication.py /app/code/new_ml_based_pipeline/new_ml_based_pipeline/s3_communication.py
