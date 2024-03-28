@@ -25,6 +25,7 @@ RUN pip install fuzzywuzzy
 # RUN apt-get install -y kubectl
 
 # Download kubectl binary using wget
+RUN apt-get update && apt-get install -y apt-transport-https gnupg wget
 RUN wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(wget -qO- https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 # Make kubectl executable
 RUN chmod +x /usr/local/bin/kubectl
